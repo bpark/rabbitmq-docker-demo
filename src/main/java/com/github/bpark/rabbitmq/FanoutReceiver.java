@@ -25,22 +25,25 @@ import com.rabbitmq.client.Envelope;
 
 import java.io.IOException;
 
-public class Receiver {
+/**
+ * @author ksr
+ */
+public class FanoutReceiver {
 
-    private final static String QUEUE_NAME = "my-queue";
+    private static final String EXCHANGE_NAME = "fanout-ex";
 
-    public static void main(String[] argv) throws Exception {
-
+    public static void main(String[] args) throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("192.168.77.8");
-        factory.setAutomaticRecoveryEnabled(true);
-        factory.setRequestedHeartbeat(60);
-
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
 
-        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-        System.out.println("Waiting for messages");
+        channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
+        String queueName = channel.queueDeclare().getQueue();
+        //String queueName = channel.queueDeclare("fanq-1", false, false, false, null).getQueue();
+        channel.queueBind(queueName, EXCHANGE_NAME, "");
+
+        System.out.println("Waiting for messages.");
 
         Consumer consumer = new DefaultConsumer(channel) {
             @Override
@@ -50,6 +53,6 @@ public class Receiver {
                 System.out.println("Received message: " + message);
             }
         };
-        channel.basicConsume(QUEUE_NAME, true, consumer);
+        channel.basicConsume(queueName, true, consumer);
     }
 }

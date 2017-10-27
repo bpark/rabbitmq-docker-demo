@@ -26,6 +26,9 @@ public class Sender {
     public static void main(String[] args) throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("192.168.77.8");
+        factory.setAutomaticRecoveryEnabled(true);
+        factory.setRequestedHeartbeat(60);
+
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
 
