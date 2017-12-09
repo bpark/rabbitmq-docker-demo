@@ -25,9 +25,6 @@ import com.rabbitmq.client.Envelope;
 
 import java.io.IOException;
 
-/**
- * @author ksr
- */
 public class FanoutReceiver {
 
     private static final String EXCHANGE_NAME = "fanout-ex";
